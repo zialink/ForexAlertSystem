@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Market } from "@/lib/market-data";
 import { useNotifications } from "@/hooks/use-notifications";
+import { useState } from "react";
+import { Smartphone } from "lucide-react";
 
 interface NextOpeningSectionProps {
   nextMarket: Market;
@@ -11,11 +13,21 @@ export default function NextOpeningSection({
   nextMarket, 
   onTestNotification 
 }: NextOpeningSectionProps) {
-  const { requestPermission, testSound } = useNotifications();
+  const { requestPermission, testSound, testPushNotification } = useNotifications();
+  const [isSendingPush, setIsSendingPush] = useState(false);
   
   const handleTestNotification = () => {
     requestPermission();
     onTestNotification();
+  };
+  
+  const handleTestPushNotification = async () => {
+    setIsSendingPush(true);
+    try {
+      await testPushNotification();
+    } finally {
+      setIsSendingPush(false);
+    }
   };
   
   return (
@@ -34,7 +46,7 @@ export default function NextOpeningSection({
             </div>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             onClick={handleTestNotification}
             className="bg-[#1565C0] text-white px-4 py-2 rounded-md flex items-center hover:bg-[#1565C0]/90 transition-colors"
@@ -48,6 +60,14 @@ export default function NextOpeningSection({
           >
             <span className="material-icons mr-2">volume_up</span>
             Test Sound
+          </Button>
+          <Button
+            onClick={handleTestPushNotification}
+            disabled={isSendingPush}
+            className="bg-[#9C27B0] text-white px-4 py-2 rounded-md flex items-center hover:bg-[#9C27B0]/90 transition-colors"
+          >
+            <Smartphone className="h-5 w-5 mr-2" />
+            {isSendingPush ? "Sending..." : "Test Mobile Push"}
           </Button>
         </div>
       </div>
