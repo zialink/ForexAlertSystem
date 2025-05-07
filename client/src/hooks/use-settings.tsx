@@ -7,7 +7,7 @@ import {
 } from "react";
 import { MARKETS } from "../lib/market-data";
 import { getFromLocalStorage, saveToLocalStorage } from "../lib/utils";
-import { useAuth } from '@/contexts/AuthContext';
+import { auth } from '@/lib/firebase';
 
 // Interface for the settings
 interface Settings {
@@ -42,8 +42,17 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 // Provider component
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const { currentUser } = useAuth();
+  // Get current user from Firebase auth
+  const [currentUser, setCurrentUser] = useState(auth.currentUser);
   const settingsKey = currentUser ? `forexTrackerSettings_${currentUser.uid}` : "forexTrackerSettings_guest";
+  
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
   
   const [settings, setSettings] = useState<Settings>(() => 
     getFromLocalStorage(settingsKey, DEFAULT_SETTINGS)

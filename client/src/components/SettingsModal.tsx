@@ -25,6 +25,7 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ onClose }: SettingsModalProps) {
   const { settings, updateSettings } = useSettings();
+  const { currentUser, signIn } = useAuth();
   const { 
     isSupported, 
     isSubscribed,
@@ -76,6 +77,29 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
         </DialogHeader>
         
         <div className="py-4">
+          {!currentUser && (
+            <div className="mb-6">
+              <Alert className="bg-blue-50 border-blue-100">
+                <div className="flex items-center">
+                  <LogIn className="h-5 w-5 text-blue-500 mr-2" />
+                  <div>
+                    <h4 className="font-medium text-blue-900">Sign in to save your settings</h4>
+                    <AlertDescription className="text-blue-700 text-sm mt-1">
+                      Create an account to save your settings across devices and browsers.
+                    </AlertDescription>
+                    <Button 
+                      onClick={signIn} 
+                      className="mt-2 bg-blue-600 hover:bg-blue-700"
+                      size="sm"
+                    >
+                      Sign in with Google
+                    </Button>
+                  </div>
+                </div>
+              </Alert>
+            </div>
+          )}
+          
           <div className="mb-6">
             <h3 className="font-medium mb-2 text-[#333333]">Notification Settings</h3>
             <div className="space-y-3">
