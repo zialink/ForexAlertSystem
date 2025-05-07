@@ -13,6 +13,9 @@ import { Slider } from "@/components/ui/slider";
 import { useSettings } from "@/hooks/use-settings";
 import { useState } from "react";
 import { MARKETS } from "@/lib/market-data";
+import { usePushNotifications } from "@/hooks/use-push-notifications";
+import { AlertCircle, Bell, BellOff, Smartphone } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -20,6 +23,13 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ onClose }: SettingsModalProps) {
   const { settings, updateSettings } = useSettings();
+  const { 
+    isSupported, 
+    isSubscribed,
+    isRegistering,
+    subscribeUser,
+    unsubscribeUser 
+  } = usePushNotifications();
   
   // Create local state for settings
   const [localSettings, setLocalSettings] = useState({...settings});
@@ -90,6 +100,63 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
                     setLocalSettings({...localSettings, enableSounds: checked})
                   }
                 />
+              </div>
+              <div className="pt-2 border-t border-gray-200">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center">
+                    <Smartphone className="h-4 w-4 mr-2 text-[#1565C0]" />
+                    <Label className="text-[#333333] font-medium">
+                      Mobile Push Notifications
+                    </Label>
+                  </div>
+                  {isSupported ? (
+                    <Badge variant={isSubscribed ? "success" : "secondary"} className="ml-2">
+                      {isSubscribed ? "Enabled" : "Disabled"}
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive" className="ml-2">Not Supported</Badge>
+                  )}
+                </div>
+                
+                {isSupported && (
+                  <div className="pl-6 pt-1">
+                    <p className="text-sm text-gray-500 mb-2">
+                      Receive market opening alerts on your mobile device even when this site is closed.
+                    </p>
+                    {isSubscribed ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex items-center text-sm"
+                        onClick={unsubscribeUser}
+                        disabled={isRegistering}
+                      >
+                        <BellOff className="h-4 w-4 mr-1" />
+                        Disable Mobile Notifications
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="default"
+                        className="flex items-center text-sm bg-[#1565C0]"
+                        onClick={subscribeUser}
+                        disabled={isRegistering}
+                      >
+                        <Bell className="h-4 w-4 mr-1" />
+                        Enable Mobile Notifications
+                      </Button>
+                    )}
+                  </div>
+                )}
+                
+                {!isSupported && (
+                  <div className="pl-6 pt-1">
+                    <div className="flex items-center text-sm text-amber-600">
+                      <AlertCircle className="h-4 w-4 mr-1" />
+                      <p>Your browser does not support push notifications.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
