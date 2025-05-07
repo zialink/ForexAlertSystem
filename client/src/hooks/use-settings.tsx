@@ -7,6 +7,7 @@ import {
 } from "react";
 import { MARKETS } from "../lib/market-data";
 import { getFromLocalStorage, saveToLocalStorage } from "../lib/utils";
+import { useAuth } from '@/contexts/AuthContext';
 
 // Interface for the settings
 interface Settings {
@@ -41,14 +42,22 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 // Provider component
 export function SettingsProvider({ children }: { children: ReactNode }) {
+  const { currentUser } = useAuth();
+  const settingsKey = currentUser ? `forexTrackerSettings_${currentUser.uid}` : "forexTrackerSettings_guest";
+  
   const [settings, setSettings] = useState<Settings>(() => 
-    getFromLocalStorage("forexTrackerSettings", DEFAULT_SETTINGS)
+    getFromLocalStorage(settingsKey, DEFAULT_SETTINGS)
   );
+  
+  // Update settings when user changes
+  useEffect(() => {
+    setSettings(getFromLocalStorage(settingsKey, DEFAULT_SETTINGS));
+  }, [currentUser, settingsKey]);
   
   // Save settings to localStorage whenever they change
   useEffect(() => {
-    saveToLocalStorage("forexTrackerSettings", settings);
-  }, [settings]);
+    saveToLocalStorage(settingsKey, settings);
+  }, [settings, settingsKey]);
   
   // Update settings
   const updateSettings = (newSettings: Settings) => {

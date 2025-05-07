@@ -14,8 +14,10 @@ import { useSettings } from "@/hooks/use-settings";
 import { useState } from "react";
 import { MARKETS } from "@/lib/market-data";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
-import { AlertCircle, Bell, BellOff, Smartphone } from "lucide-react";
+import { AlertCircle, Bell, BellOff, Smartphone, LogIn } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface SettingsModalProps {
   onClose: () => void;
