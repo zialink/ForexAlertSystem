@@ -158,9 +158,44 @@ export function isMarketOpen(
   return hours >= openHour && hours < closeHour;
 }
 
-// Get time for a specific timezone
+// Get time for a specific timezone with more robust handling
 export function getTimeInTimeZone(timeZoneId: string): Date {
-  return new Date(new Date().toLocaleString('en-US', { timeZone: timeZoneId }));
+  try {
+    // Use Intl.DateTimeFormat for better time zone handling
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timeZoneId,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false
+    });
+    
+    const parts = formatter.formatToParts(new Date());
+    const datePartMap: Record<string, string> = {};
+    
+    parts.forEach(part => {
+      if (part.type !== 'literal') {
+        datePartMap[part.type] = part.value;
+      }
+    });
+    
+    // Construct a date from the parts
+    const year = parseInt(datePartMap.year);
+    const month = parseInt(datePartMap.month) - 1; // JavaScript months are 0-based
+    const day = parseInt(datePartMap.day);
+    const hour = parseInt(datePartMap.hour);
+    const minute = parseInt(datePartMap.minute);
+    const second = parseInt(datePartMap.second);
+    
+    return new Date(year, month, day, hour, minute, second);
+  } catch (error) {
+    console.error(`Error getting time for timezone ${timeZoneId}:`, error);
+    // Fallback to the previous method if the new method fails
+    return new Date(new Date().toLocaleString('en-US', { timeZone: timeZoneId }));
+  }
 }
 
 // Get market opening time for today or next day if already passed
