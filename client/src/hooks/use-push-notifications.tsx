@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from './use-toast';
+import { API_BASE_URL } from '../lib/api-config';
 
 // Application server public key
 const PUBLIC_VAPID_KEY = 'BLV5Gh2S9oi-7EywQ1Rm6tJ7N0GzElb4NbCNQ_JbJKJKECQ9Zsu-0ZCQt_YZGYt4IHGJ9wvpTN3xiTvCyRCpbDQ';
@@ -96,7 +97,7 @@ export function usePushNotifications() {
       }
 
       // Send the subscription to the server
-      const response = await fetch('/api/subscribe', {
+      const response = await fetch(`${API_BASE_URL}/api/subscribe`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
