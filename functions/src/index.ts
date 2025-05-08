@@ -1,7 +1,7 @@
-import * as functions from 'firebase-functions';
-import * as express from 'express';
-import * as cors from 'cors';
-import * as webPush from 'web-push';
+import functions from 'firebase-functions';
+import express from 'express';
+import cors from 'cors';
+import webPush from 'web-push';
 import { Pool } from 'pg';
 
 // Set up Express app
@@ -135,16 +135,16 @@ app.post('/api/notify/market-opening', async (req, res) => {
     if (!market || !market.name) {
       return res.status(400).json({ error: 'Invalid market data' });
     }
-    
+
     const payload = JSON.stringify({
       title: `${market.name} Market Now Open`,
       body: `The ${market.name} forex market is now open for trading.`,
       icon: '/favicon.ico',
       tag: `market-open-${market.id}`
     });
-    
+
     const subscriptions = await storage.getAllSubscriptions();
-    
+
     for (const subscription of subscriptions) {
       try {
         await webPush.sendNotification(subscription, payload);
@@ -155,11 +155,11 @@ app.post('/api/notify/market-opening', async (req, res) => {
         }
       }
     }
-    
-    res.status(200).json({ message: 'Market opening notifications sent' });
+
+    return res.status(200).json({ message: 'Market opening notifications sent' });
   } catch (err) {
     console.error('Market notify error:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 

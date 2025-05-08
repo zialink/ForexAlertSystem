@@ -1,3 +1,7 @@
+// filepath: c:\Users\Isaiah\Documents\Programming Projects\reactjs\ForexAlertSystem\db\index.ts
+import { config } from 'dotenv';
+config(); // Load environment variables from .env file
+
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import ws from "ws";
