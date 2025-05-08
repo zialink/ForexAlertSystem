@@ -155,7 +155,7 @@ export function usePushNotifications() {
       
       // Tell server to remove subscription
       if (unsubscribed && subscription) {
-        await fetch('/api/unsubscribe', {
+        await fetch(`${API_BASE_URL}/api/unsubscribe`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
