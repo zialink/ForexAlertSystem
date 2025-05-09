@@ -1,9 +1,11 @@
-import functions from 'firebase-functions';
+import * as functions from 'firebase-functions';
 import express from 'express';
 import cors from 'cors';
 import webPush from 'web-push';
 import { Pool } from 'pg';
 
+import { config } from 'dotenv';
+config(); // Load environment variables from .env file
 // Set up Express app
 const app = express();
 app.use(cors({ origin: true }));
@@ -16,7 +18,7 @@ const pool = new Pool({
 
 // Initialize Web Push
 webPush.setVapidDetails(
-  'mailto:your-email@example.com', // Replace with your email
+  'mailto:your-email@example.com',
   process.env.VAPID_PUBLIC_KEY || '', 
   process.env.VAPID_PRIVATE_KEY || ''
 );
